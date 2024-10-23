@@ -1,3 +1,56 @@
-﻿@page "/Tarea" 
+﻿@page "/tarea" 
 @rendermode InteractiveServer
 @attribute [StreamRendering]
+
+<PageTitle>
+    Tarea
+</PageTitle>
+
+<h3>Tarea</h3>
+
+<div class="row justify-content-center">
+    <div class="col-6">
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Titulo</label>
+            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Titulo">
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Descripcion</label>
+            <textarea class="form-control" id="FormControlTextarea1" rows="3"></textarea>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Prioridad</label>
+            <select class="form-select" aria-label="Default select example">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlTextarea1" class="form-label">Estado</label>
+            <select class="form-select" aria-label="Default select example">
+                <option selected>Open this select menu</option>
+                <option value="1">One</option>
+                <option value="2">Two</option>
+                <option value="3">Three</option>
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="exampleFormControlInput1" class="form-label">Fecha Limite</label>
+            <div class="mb-3">
+                <InputDate @bind-Value="selectedDate" class="" />
+            </div>
+            <div class="mb-3">
+                <span class="btn btn-primary btn-sm">Acectar</span>
+                <span class="btn btn-primary btn-sm">Cancelar</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@code{
+    private DateTime selectedDate = DateTime.Now;
+
+}
