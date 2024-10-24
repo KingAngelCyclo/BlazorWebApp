@@ -16,10 +16,6 @@
 
   <ItemGroup>
     <Folder Include="Components\Pages\Usuarios\" />
-    <Folder Include="Data\Entities\" />
-    <Folder Include="Data\Dtos\" />
-    <Folder Include="Constants\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

@@ -1,56 +1,204 @@
-﻿@page "/tarea" 
-@rendermode InteractiveServer
+﻿@rendermode InteractiveServer
 @attribute [StreamRendering]
+@page "/tarea"
 
-<PageTitle>
-    Tarea
-</PageTitle>
 
-<h3>Tarea</h3>
 
-<div class="row justify-content-center">
-    <div class="col-6">
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Titulo</label>
-            <input type="text" class="form-control" id="exampleFormControlInput1" placeholder="Titulo">
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Descripcion</label>
-            <textarea class="form-control" id="FormControlTextarea1" rows="3"></textarea>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Prioridad</label>
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlTextarea1" class="form-label">Estado</label>
-            <select class="form-select" aria-label="Default select example">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-            </select>
-        </div>
-        <div class="mb-3">
-            <label for="exampleFormControlInput1" class="form-label">Fecha Limite</label>
+
+@if (ShowForm)
+{
+    <div class="card">
+        <h5 class="card-header">@Accion Tarea</h5>
+        <div class="card-body">
             <div class="mb-3">
-                <InputDate @bind-Value="selectedDate" class="" />
+                <label for="nombre" class="form-label">Titulo</label>
+                <input @bind-value="MiTarea.Titulo" type="text" class="form-control" id="nombre" placeholder="Nombre" disabled="@DisableInputs">
             </div>
             <div class="mb-3">
-                <span class="btn btn-primary btn-sm">Acectar</span>
-                <span class="btn btn-primary btn-sm">Cancelar</span>
+                <label for="descripcion" class="form-label">Descripción</label>
+                <textarea @bind="MiTarea.Descripcion" class="form-control" id="descripcion" rows="3" disabled="@DisableInputs"></textarea>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Prioridad</label>
+                <select class="form-select" aria-label="Default select example" @bind="@MiTarea.Prioridad">
+                    <option selected>Open this select menu</option>
+                    @foreach (var Prioridad in Enum.GetValues(typeof(Prioridad)))
+                    {
+                        <option value="@Prioridad">
+                            @Prioridad.ToString()
+                        </option>
+
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlTextarea1" class="form-label">Estado</label>
+                <select class="form-select" aria-label="Default select example" @bind="@MiTarea.Estado" >
+                    <option selected>Open this select menu</option>
+                    @foreach (var Estado in Enum.GetValues(typeof(Estado)))
+                    {
+                        <option value="@Estado">
+                            @Estado.ToString()
+                        </option>
+
+                    }
+                </select>
+            </div>
+            <div class="mb-3">
+                <label for="exampleFormControlInput1" class="form-label">Fecha Limite</label>
+                <div class="mb-3">
+                    <InputDate @bind-Value="MiTarea.FechaLimite" class="form-control" />
+                </div>
+            @if (Accion != Constants.Acciones.Ver)
+            {
+                <span class="btn btn-primary" @onclick="Aceptar">Aceptar</span>
+            }
+            <span class="btn btn-danger" @onclick="btnCancelarClick">@(Accion != Constants.Acciones.Ver ? "Cancelar" : "Salir")</span>
             </div>
         </div>
     </div>
-</div>
+    
+}
+else{
+    @if (TareaList != null)
+    {
+        <div class="card text-bg-dark mb-3" style="max-width: auto;">
+            <div class="card-header">
+                Tareas en procesos
+                <span class="btn btn-success" @onclick="btnAgregarClick">+</span>
+            </div>
+            <div class="card-body">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Titulo</th>
+                            <th scope="col">Descripcion</th>
+                            <th scope="col">Prioridad</th>
+                            <th scope="col">Estado</th>
+                            <th scope="col">Fecha de Creacion</th>
+                            <th scope="col">Fecha Limite</th>
+                            <th scope="col">Action</th>
+                            <th scope="col">Finalizar</th>
+
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (TareaList?.Count > 0)
+                        {
+                            @foreach (var p in TareaList)
+                            {
+                                <tr>
+                                    <th scope="row">@p.Id</th>
+                                    <td>@p.Titulo</td>
+                                    <td>@p.Descripcion</td>
+                                    <td>@p.Prioridad</td>
+                                    <td>@p.Estado</td>
+                                    <td>@p.FechaCreacion?.ToShortDateString()</td>
+                                    <td>@p.FechaLimite?.ToShortDateString()</td>
+                                    <td>
+                                        <div class="btn-group" role="group" aria-label="Basic mixed styles example">
+                                            <span @onclick="()=>btnEditarClick(p)" class="btn btn-outline-warning">Editar</span>
+                                            <span @onclick="()=>btnEliminarClick(p)" class="btn btn-outline-danger">Eliminar</span>
+                                            <span @onclick="()=>btnVerClick(p)" class="btn btn-outline-primary">Ver</span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    }
+}
+
 
 
 @code{
     private DateTime selectedDate = DateTime.Now;
+    public string Accion { get; set; } = "Registrar";
+    public TareaRequest MiTarea { get; set; } = new();
+    public List<TareaDto>? TareaList { get; set; }
+    bool ShowForm = false, DisableInputs = false;
 
+    protected override async Task OnInitializedAsync()
+    {
+        await Consultar();
+    }
+
+    public void btnAgregarClick()
+    {
+        Accion = Constants.Acciones.Registrar;
+        ShowForm = true;
+        StateHasChanged();
+        DisableInputs = false;
+
+        MiTarea.FechaCreacion = DateTime.Now;
+
+    }
+    public void btnEditarClick(TareaDto dto)
+    {
+        Accion = Constants.Acciones.Modificar;
+        ShowForm = true;
+        DisableInputs = false;
+        MiTarea = dto.ToRequest();
+    }
+    public void btnEliminarClick(TareaDto dto)
+    {
+        Accion = Constants.Acciones.Eliminar;
+        ShowForm = true;
+        DisableInputs = true;
+        MiTarea = dto.ToRequest();
+    }
+    public void btnVerClick(TareaDto dto)
+    {
+        Accion = Constants.Acciones.Ver;
+        ShowForm = true;
+        DisableInputs = true;
+        MiTarea = dto.ToRequest();
+    }
+    public void btnCancelarClick()
+    {
+        Limpiar();
+    }
+
+    async Task Consultar()
+    {
+        var result = await service.Get();
+        if (result.Succesd)
+        {
+            TareaList =
+            result.Data?.ToList()
+            ??
+            new List<TareaDto>();
+        }
+    }
+    public void Limpiar()
+    {
+        ShowForm = false;
+        MiTarea = new();
+    }
+    public async Task Aceptar()
+    {
+        if (MiTarea.FechaLimite < DateTime.Now.Date)
+        {
+            await jsRuntime.InvokeVoidAsync("alert", "La fecha límite no puede ser anterior al día de hoy.");
+            return;
+        }
+
+        Result r =
+        Accion == Constants.Acciones.Registrar ? await service.Create(MiTarea) :
+        Accion == Constants.Acciones.Modificar ? await service.Update(MiTarea) :
+        Accion == Constants.Acciones.Eliminar ? await service.Delete(MiTarea.Id) :
+        Accion == Constants.Acciones.Ver ? Result.Success("") :
+        Result.Failure("Accion no soportada");
+
+        if (r.Succesd)
+        {
+            await Consultar();
+            Limpiar();
+        }
+    }
 }
