@@ -4,13 +4,12 @@
 
 
 
-
 @if (ShowForm)
 {
     <div class="card">
         <h5 class="card-header">@Accion Tarea</h5>
         <div class="card-body">
-            <div class="mb-3">
+            <div class="mb-3">cc  
                 <label for="nombre" class="form-label">Titulo</label>
                 <input @bind-value="MiTarea.Titulo" type="text" class="form-control" id="nombre" placeholder="Nombre" disabled="@DisableInputs">
             </div>
@@ -20,8 +19,8 @@
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label">Prioridad</label>
-                <select class="form-select" aria-label="Default select example" @bind="@MiTarea.Prioridad">
-                    <option selected>Open this select menu</option>
+                <select class="form-select" aria-label="Default select example" @bind="@MiTarea.Prioridad" disabled="@DisableInputs">
+                    <option selected disabled>Seleccione </option>
                     @foreach (var Prioridad in Enum.GetValues(typeof(Prioridad)))
                     {
                         <option value="@Prioridad">
@@ -33,8 +32,8 @@
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlTextarea1" class="form-label">Estado</label>
-                <select class="form-select" aria-label="Default select example" @bind="@MiTarea.Estado" >
-                    <option selected>Open this select menu</option>
+                <select class="form-select" aria-label="Default select example" @bind="@MiTarea.Estado" disabled="@DisableInputs">
+                    <option selected disabled>Open this select menu</option>
                     @foreach (var Estado in Enum.GetValues(typeof(Estado)))
                     {
                         <option value="@Estado">
@@ -46,7 +45,7 @@
             </div>
             <div class="mb-3">
                 <label for="exampleFormControlInput1" class="form-label">Fecha Limite</label>
-                <div class="mb-3">
+                <div class="mb-3" disabled="@DisableInputs">
                     <InputDate @bind-Value="MiTarea.FechaLimite" class="form-control" />
                 </div>
             @if (Accion != Constants.Acciones.Ver)
@@ -128,14 +127,14 @@ else{
         await Consultar();
     }
 
-    public void btnAgregarClick()
+    public async void btnAgregarClick()
     {
         Accion = Constants.Acciones.Registrar;
         ShowForm = true;
         StateHasChanged();
         DisableInputs = false;
-
         MiTarea.FechaCreacion = DateTime.Now;
+        await Tiempo();
 
     }
     public void btnEditarClick(TareaDto dto)
@@ -144,6 +143,7 @@ else{
         ShowForm = true;
         DisableInputs = false;
         MiTarea = dto.ToRequest();
+
     }
     public void btnEliminarClick(TareaDto dto)
     {
@@ -182,11 +182,6 @@ else{
     }
     public async Task Aceptar()
     {
-        if (MiTarea.FechaLimite < DateTime.Now.Date)
-        {
-            await jsRuntime.InvokeVoidAsync("alert", "La fecha límite no puede ser anterior al día de hoy.");
-            return;
-        }
 
         Result r =
         Accion == Constants.Acciones.Registrar ? await service.Create(MiTarea) :
@@ -199,6 +194,14 @@ else{
         {
             await Consultar();
             Limpiar();
+        }
+    }
+    public async Task Tiempo()
+    {
+        if (MiTarea.FechaLimite < DateTime.Now.Date)
+        {
+            await jsRuntime.InvokeVoidAsync("alert", "La fecha límite no puede ser anterior al día de hoy.");
+            return;
         }
     }
 }
